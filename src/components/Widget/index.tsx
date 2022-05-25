@@ -17,13 +17,22 @@ export type FeedbackType = keyof typeof feedbackTypes;
 
 function Widget(){
 
-  const [ feedbackType, SetFeedbackType ] = useState<FeedbackType | null>(null);
-  const [ feedbackSent, SetFeedbackSent ] = useState(false);
+  const [ feedbackType, setFeedbackType ] = useState<FeedbackType | null>(null);
+  const [ feedbackSent, setFeedbackSent ] = useState(false);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   function handleOpen(){
     bottomSheetRef.current?.expand();
+  }
+
+  function handleRestartFeedback(){
+    setFeedbackType(null);
+    setFeedbackSent(false);
+  }
+
+  function handleFeedbackSent(){
+    setFeedbackSent(true)
   }
 
   return (
@@ -48,16 +57,18 @@ function Widget(){
       >
         {
           feedbackSent ?
-          <Success />
+          <Success onSendAnotherFeedback={handleRestartFeedback}/>
           :
           <>
           {
             feedbackType ?
             <Form 
-              feedbackType={feedbackType}          
+              feedbackType={feedbackType}     
+              onFeedbackCanceled={handleRestartFeedback}   
+              onFeedbackSent={handleFeedbackSent}  
             />
             :
-            <Options />
+            <Options onFeedbackTypeChanged={setFeedbackType} />
           } 
           </>
         }
