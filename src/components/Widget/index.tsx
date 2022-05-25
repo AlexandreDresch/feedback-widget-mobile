@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { View, TouchableOpacity } from 'react-native';
 import { ChatTeardropDots } from 'phosphor-react-native';
@@ -7,6 +7,7 @@ import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 
 import { Options } from '../Options';
 import { Form } from '../Form';
+import { Success } from '../Success';
 
 import { styles } from './styles';
 import { theme } from '../../theme';
@@ -15,6 +16,9 @@ import { feedbackTypes } from '../../utils/feedbackTypes';
 export type FeedbackType = keyof typeof feedbackTypes;
 
 function Widget(){
+
+  const [ feedbackType, SetFeedbackType ] = useState<FeedbackType | null>(null);
+  const [ feedbackSent, SetFeedbackSent ] = useState(false);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -42,9 +46,21 @@ function Widget(){
         backgroundStyle={styles.modal}
         handleIndicatorStyle={styles.indicator}
       >
-        <Form 
-          feedbackType='IDEA'
-        />
+        {
+          feedbackSent ?
+          <Success />
+          :
+          <>
+          {
+            feedbackType ?
+            <Form 
+              feedbackType={feedbackType}          
+            />
+            :
+            <Options />
+          } 
+          </>
+        }
       </BottomSheet>
     </>
   );
